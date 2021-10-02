@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model SSO.Models.LoginViewModel
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<form method="post" asp-action="Login" asp-controller="Home">
+    <!-- /.login-logo -->
+    <div class="card-body">
+        <div class="login-container align-content-center">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="card-body login-card-body">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="input-group mb-3">
+                <input type="email" class="form-control" placeholder="البريد الإلكتروني" asp-for="Email">
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-envelope"></span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="input-group mb-3"> <span asp-validation-for="Email" class="text-danger"></span></div>
+            <div class="input-group mb-3">
+                <input type="password" class="form-control" placeholder="كلمة المرور" asp-for="Password">
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-lock"></span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="input-group mb-3"> <span asp-validation-for="Password" class="text-danger"></span></div>
+            <!-- /.col -->
+            <div class="card-footer text-center">
+                <button type="submit" class="btn">تسجيل دخول</button>
+            </div>
+            <!-- /.col -->
+
+
+        </div>
+    </div>
+</form>
