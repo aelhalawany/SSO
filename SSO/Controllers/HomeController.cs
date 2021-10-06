@@ -2,14 +2,17 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using SSO.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SSO.Controllers
@@ -69,6 +72,8 @@ namespace SSO.Controllers
             {
                 //StringContent content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
                 string endpoint = "https://localhost:44333/jwt";
+                // Setting Authorization.  
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetJwtToken());
 
                 using (var Response = await client.GetAsync(endpoint))
                 {
@@ -117,6 +122,44 @@ namespace SSO.Controllers
 
                 }
             }
+        }
+
+        public static string GetJwtToken()
+        {
+            var claims = new[]
+          {
+                new Claim(JwtRegisteredClaimNames.Sub, "some_id"),
+                new Claim("granny", "cookie")
+            };
+
+            var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
+            var key = new SymmetricSecurityKey(secretBytes);
+            var algorithm = SecurityAlgorithms.HmacSha256;
+
+            var signingCredentials = new SigningCredentials(key, algorithm);
+            var header = new JwtHeader(signingCredentials);
+
+            var payload = new JwtPayload
+            {
+                //{"some_id","some_id"},
+                //{"granny","cookie"},
+                {"exp",DateTime.Now.AddSeconds(1) },
+                {"iss",Constants.Issuer },
+                {"aud",Constants.Audiance }
+            };
+            var secToken = new JwtSecurityToken(header, payload);
+            var handler = new JwtSecurityTokenHandler();
+            var tokenstring = handler.WriteToken(secToken);
+            var token = new JwtSecurityToken(
+                "https://localhost:44330/",
+                "https://localhost:44330/",
+                claims,
+                notBefore: DateTime.Now,
+                expires: DateTime.Now.AddMinutes(1),
+                signingCredentials);
+
+            var tokenJson = new JwtSecurityTokenHandler().WriteToken(token);
+            return handler.WriteToken(token);
         }
     }
 }

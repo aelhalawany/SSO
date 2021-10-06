@@ -29,7 +29,7 @@ namespace ERADapi.Helper
             {
                 {"some_id","some_id"},
                 {"granny","cookie"},
-                {"exp",DateTime.Now.AddSeconds(1) },
+                {"exp",DateTime.Now.AddMinutes(1) },
                 {"iss",Constants.Issuer },
                 {"aud",Constants.Audiance }
             };
@@ -41,7 +41,7 @@ namespace ERADapi.Helper
                 Constants.Audiance,
                 claims,
                 notBefore: DateTime.Now,
-                expires: DateTime.Now.AddSeconds(1),
+                expires: DateTime.Now.AddMinutes(1),
                 signingCredentials);
 
             var tokenJson = new JwtSecurityTokenHandler().WriteToken(token);

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -39,12 +40,14 @@ namespace ERADapi
                      var key = new SymmetricSecurityKey(secretBytes);
                      Config.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                      {
-                         IssuerSigningKey = key,
                          ValidateIssuer = true,
                          ValidateAudience = true,
-                         ValidIssuer = Constants.Issuer,
-                         ValidAudience = Constants.Audiance,
-                         ValidateLifetime = true
+                         ValidateLifetime = true,
+                         ValidateIssuerSigningKey=true,
+                         ValidIssuer = "https://localhost:44330/",
+                         ValidAudience = "https://localhost:44330/",
+                         IssuerSigningKey = key
+
                      };
                  });
         }
@@ -56,7 +59,15 @@ namespace ERADapi
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            //app.Use(async (context, next) =>
+            //{
+            //    var token = context.Session.GetString("Token");
+            //    if (!string.IsNullOrEmpty(token))
+            //    {
+            //        context.Request.Headers.Add("Authorization", "Bearer " + token);
+            //    }
+            //    await next();
+            //});
             app.UseHttpsRedirection();
 
             app.UseRouting();
